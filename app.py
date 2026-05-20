@@ -52,8 +52,12 @@ QUOTES = [
 ]
 
 @app.route("/")
-def index():
+def landing():
     return render_template("index.html")
+
+@app.route("/app")
+def study_app():
+    return render_template("app.html")
 
 # ── Subjects ──────────────────────────────────────────────────────────────────
 
