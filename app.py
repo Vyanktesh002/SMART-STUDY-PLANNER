@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 from datetime import datetime, date
 import json
 from pathlib import Path
@@ -10,6 +11,9 @@ app = Flask(
     static_folder=str(BASE_DIR),
     static_url_path="/static",
 )
+
+# Allow cross-origin requests to the API
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Try to import Firebase storage, fall back to in-memory if not configured
 try:
@@ -48,8 +52,12 @@ QUOTES = [
 ]
 
 @app.route("/")
-def index():
+def landing():
     return render_template("index.html")
+
+@app.route("/app")
+def study_app():
+    return render_template("app.html")
 
 # ── Subjects ──────────────────────────────────────────────────────────────────
 
@@ -175,5 +183,10 @@ def api_get_quote():
     quote = random.choice(QUOTES)
     return jsonify(quote)
 
+
+@app.route("/api/firebase_status", methods=["GET"])
+def api_firebase_status():
+    return jsonify({"firebase_enabled": FIREBASE_ENABLED})
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)

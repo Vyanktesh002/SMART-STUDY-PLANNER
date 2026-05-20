@@ -15,7 +15,10 @@ from typing import List, Dict, Optional
 import os
 
 # Initialize Firebase app (only once)
-_cred_path = os.path.join(os.path.dirname(__file__), "serviceAccountKey.json")
+_cred_path = os.getenv("FIREBASE_CREDENTIALS_PATH") or os.path.join(os.path.dirname(__file__), "serviceAccountKey.json")
+
+if not os.path.exists(_cred_path):
+    raise FileNotFoundError(f"Firebase service account file not found at: {_cred_path}")
 
 if not firebase_admin._apps:
     cred = credentials.Certificate(_cred_path)
@@ -38,7 +41,8 @@ def get_subjects() -> List[Dict]:
 
 def save_subject(subject: Dict) -> str:
     ref = db.collection("subjects").add(subject)
-    return ref[1].id
+    # add() returns (DocumentReference, write_time)
+    return ref[0].id
 
 
 def update_subject(subject_id: str, data: Dict):
@@ -95,7 +99,7 @@ def update_progress(subject_id: str, data: Dict):
 
 def save_pomodoro_session(session: Dict) -> str:
     ref = db.collection("pomodoro_sessions").add(session)
-    return ref[1].id
+    return ref[0].id
 
 
 def get_pomodoro_sessions(subject_id: Optional[str] = None) -> List[Dict]:
