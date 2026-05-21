@@ -299,6 +299,19 @@
   <!-- Pomodoro audio context (bell) -->
   <div id="audio-ctx" style="display:none"></div>
 
+  <!-- Admin Panel (Ctrl+Shift+A) -->
+  <div id="admin-panel" class="admin-panel">
+    <div class="admin-panel-header">
+      <div class="admin-panel-title">
+        <span class="admin-panel-icon">⬡</span>
+        <span>Admin — Active Devices</span>
+      </div>
+      <button id="admin-close" class="admin-close-btn" title="Close (Esc)">✕</button>
+    </div>
+    <div id="admin-device-list" class="admin-loading">Connecting to Firestore…</div>
+  </div>
+
   <script type="module" src="/static/app.js"></script>
+  <script type="module" src="/static/admin.js"></script>
 </body>
 </html>

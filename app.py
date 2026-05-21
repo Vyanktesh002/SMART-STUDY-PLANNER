@@ -2,7 +2,11 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from datetime import datetime, date
 import json
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 app = Flask(
@@ -187,6 +191,38 @@ def api_get_quote():
 @app.route("/api/firebase_status", methods=["GET"])
 def api_firebase_status():
     return jsonify({"firebase_enabled": FIREBASE_ENABLED})
+
+@app.route("/api/firebase-web-config", methods=["GET"])
+def api_firebase_web_config():
+    return jsonify({
+        "apiKey": os.environ.get("FIREBASE_API_KEY"),
+        "authDomain": os.environ.get("FIREBASE_AUTH_DOMAIN"),
+        "projectId": os.environ.get("FIREBASE_PROJECT_ID"),
+        "storageBucket": os.environ.get("FIREBASE_STORAGE_BUCKET"),
+        "messagingSenderId": os.environ.get("FIREBASE_MESSAGING_SENDER_ID"),
+        "appId": os.environ.get("FIREBASE_APP_ID"),
+        "measurementId": os.environ.get("FIREBASE_MEASUREMENT_ID"),
+    })
+
+@app.route("/api/device-offline", methods=["POST"])
+def api_device_offline():
+    if not FIREBASE_ENABLED:
+        return "", 204
+    try:
+        import json as _json
+        raw = request.get_data(as_text=True)
+        data = _json.loads(raw) if raw else {}
+        session_id = data.get("sessionId", "")
+        if session_id:
+            from firebase_admin import firestore as _fs
+            _db = _fs.client()
+            _db.collection("device_sessions").document(session_id).update({
+                "isOnline": False,
+                "lastSeen": _fs.SERVER_TIMESTAMP,
+            })
+    except Exception:
+        pass
+    return "", 204
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
