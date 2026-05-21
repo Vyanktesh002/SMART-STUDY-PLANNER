@@ -26,7 +26,7 @@ def calculate_priority_scores(subjects: List[Dict]) -> Dict[str, float]:
         adjusted_hours = required_hours * (1 + (5 - prep_level) * 0.15)
 
         score = (difficulty * 2 + adjusted_hours) / days_left
-        scores[s["id"]] = score
+        scores[s["id"]] = min(score, 10.0)  # Cap the score at 10.0
 
     return scores
 
