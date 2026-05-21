@@ -40,9 +40,8 @@ def get_subjects() -> List[Dict]:
 
 
 def save_subject(subject: Dict) -> str:
-    ref = db.collection("subjects").add(subject)
-    # add() returns (DocumentReference, write_time)
-    return ref[0].id
+    update_time, ref = db.collection("subjects").add(subject)
+    return ref.id
 
 
 def update_subject(subject_id: str, data: Dict):
@@ -98,8 +97,8 @@ def update_progress(subject_id: str, data: Dict):
 # ── Pomodoro Sessions ─────────────────────────────────────────────────────────
 
 def save_pomodoro_session(session: Dict) -> str:
-    ref = db.collection("pomodoro_sessions").add(session)
-    return ref[0].id
+    update_time, ref = db.collection("pomodoro_sessions").add(session)
+    return ref.id
 
 
 def get_pomodoro_sessions(subject_id: Optional[str] = None) -> List[Dict]:
