@@ -1,3 +1,4 @@
+import * as Firebase from './firebase-service.js';
 /* ── Smart Study Planner — app.js ─────────────────────────────────────────── */
 
 "use strict";
