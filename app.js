@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setupTimetableButtons();
   setupProgressListener();
   setupPomodoro();
+  
+  // Sample subject helper for demos
+  const sampleBtn = $("#add-sample-subject");
+  if (sampleBtn) sampleBtn.addEventListener("click", addSampleSubject);
 
   loadQuote();
   loadStreak();
@@ -206,6 +210,28 @@ async function saveSubject() {
     if (isViewActive("analytics")) renderAnalytics();
   } catch (e) {
     toast("Error saving subject.", "error");
+  }
+}
+
+// Add a single sample subject (for demos / professor walkthrough)
+async function addSampleSubject() {
+  const d = new Date();
+  const exam = new Date(d.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
+  const payload = {
+    name: "Sample: Calculus",
+    exam_date: exam.toISOString().slice(0, 10),
+    difficulty: 4,
+    prep_level: 3,
+    required_hours: 40,
+    color: "#FF8A65"
+  };
+  try {
+    await api("/api/subjects", "POST", payload);
+    toast("Sample subject added ✓", "success");
+    await loadSubjects();
+    if (isViewActive("analytics")) renderAnalytics();
+  } catch (e) {
+    toast("Failed to add sample subject.", "error");
   }
 }
 
