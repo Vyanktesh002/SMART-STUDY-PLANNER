@@ -223,7 +223,7 @@ async function addSampleSubject() {
     difficulty: 4,
     prep_level: 3,
     required_hours: 40,
-    color: "#FF8A65"
+    color: "#6366f1"
   };
   try {
     await api("/api/subjects", "POST", payload);
